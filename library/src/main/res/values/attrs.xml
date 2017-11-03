@@ -8,6 +8,7 @@
         <attr name="searchSuggestionBackground" format="integer" />
         <attr name="searchBarHeight" format="dimension"  />
         <attr name="voiceHintPrompt" format="string" />
+        <attr name="voiceSearchEnabled" format="boolean"/>
         <attr name="android:fitsSystemWindows"/>
         <attr name="android:hint" />
         <attr name="android:textColor" />

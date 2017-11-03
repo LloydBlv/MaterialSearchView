@@ -70,7 +70,10 @@ public class MaterialSearchView extends FrameLayout {
      */
     public static final int REQUEST_VOICE = 42;
 
-
+    /**
+     * whether or not the voice search is enabled
+     */
+    private boolean mIsVoiceSearchEnabled = true;
     /**
      * Number of suggestions to show.
      */
@@ -210,6 +213,9 @@ public class MaterialSearchView extends FrameLayout {
 
         // Initialize style
         initStyle(attributeSet, defStyleAttributes);
+
+        // Show voice button
+        displayVoiceButton(mIsVoiceSearchEnabled);
     }
     //endregion
 
@@ -262,8 +268,7 @@ public class MaterialSearchView extends FrameLayout {
             }
         });
 
-        // Show voice button
-        displayVoiceButton(true);
+
 
         // Initialize the search view.
         initSearchView();
@@ -354,6 +359,11 @@ public class MaterialSearchView extends FrameLayout {
                         R.styleable.MaterialSearchView_android_inputType,
                         InputType.TYPE_CLASS_TEXT)
                 );
+            }
+
+            if(typedArray.hasValue(R.styleable.MaterialSearchView_voiceSearchEnabled)) {
+                mIsVoiceSearchEnabled =
+                    typedArray.getBoolean(R.styleable.MaterialSearchView_voiceSearchEnabled, true);
             }
 
             if (typedArray.hasValue(R.styleable.MaterialSearchView_searchBarHeight)) {
