@@ -17,7 +17,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.speech.RecognizerIntent;
-import android.support.design.internal.NavigationMenuPresenter;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatDelegate;
@@ -41,11 +40,9 @@ import android.widget.FilterQueryProvider;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import br.com.mauker.materialsearchview.adapters.SampleSuggestionsAdapter;
-import br.com.mauker.materialsearchview.adapters.SuggestionsAdapter;
 import br.com.mauker.materialsearchview.utils.RxSearch;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -471,7 +468,7 @@ public class MaterialSearchView extends FrameLayout {
                         .debounce(mDebounceTimeoutInMillis, TimeUnit.MILLISECONDS)
                         .filter(new Predicate<String>() {
                             @Override public boolean test(String s) throws Exception {
-                                return s.length() >= mAutoCompleteMinimunLength;
+                                return s.length() >= mAutoCompleteMinimumLength;
                             }
                         })
                         .observeOn(AndroidSchedulers.mainThread())
@@ -492,10 +489,10 @@ public class MaterialSearchView extends FrameLayout {
     }
 
     long mDebounceTimeoutInMillis = 500;
-    int mAutoCompleteMinimunLength = 2;
+    int mAutoCompleteMinimumLength = 2;
 
     public void setAutoCompleteMinimunLength(int mAutoCompleteMinimunLength) {
-        this.mAutoCompleteMinimunLength = mAutoCompleteMinimunLength;
+        this.mAutoCompleteMinimumLength = mAutoCompleteMinimunLength;
     }
 
     public void setDebounceTimeoutInMillis(long mDebounceTimeoutInMillis) {

@@ -27,9 +27,9 @@ public class RxSearch {
       @Override
       public boolean onQueryTextChange(String newText) {
         Log.e("RxSearch", "onQueryTextChange:" + newText);
-        if (!newText.isEmpty()) {
+        //if (!newText.isEmpty()) {
           subject.onNext(newText);
-        }
+        //}
         return true;
       }
     });
