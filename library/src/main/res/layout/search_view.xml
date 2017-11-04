@@ -11,11 +11,13 @@
         android:id="@+id/transparent_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/search_layover_bg" />
+        android:background="#99000000" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/transparent"
+
         android:orientation="vertical">
 
         <LinearLayout
@@ -76,10 +78,9 @@
         </LinearLayout>
 
         <android.support.v7.widget.RecyclerView
-            android:background="@color/transparent"
             android:id="@+id/suggestion_list"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             />
     </LinearLayout>
 </FrameLayout>
