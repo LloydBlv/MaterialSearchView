@@ -303,10 +303,10 @@ public class MaterialSearchView extends FrameLayout {
             }
         });
 
-        mSuggestionAdapter = new SampleSuggestionsAdapter();
-        mSuggestionsListView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-        mSuggestionsListView.setHasFixedSize(true);
-        mSuggestionsListView.setAdapter(mSuggestionAdapter);
+        //mSuggestionAdapter = new SampleSuggestionsAdapter();
+        //mSuggestionsListView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        //mSuggestionsListView.setHasFixedSize(true);
+        //mSuggestionsListView.setAdapter(mSuggestionAdapter);
         //mSuggestionsListView.setAdapter(mAdapter);
         //mSuggestionsListView.setTextFilterEnabled(true);
     }
@@ -1083,6 +1083,18 @@ public class MaterialSearchView extends FrameLayout {
                     value
             );
         }
+    }
+
+    public RecyclerView.Adapter<RecyclerView.ViewHolder> getSuggestionAdapter(){
+        return mSuggestionAdapter;
+    }
+
+    public void setSuggestionAdapter(
+        final RecyclerView.Adapter<RecyclerView.ViewHolder> newAdapter) {
+        mSuggestionAdapter = newAdapter;
+        mSuggestionsListView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        mSuggestionsListView.setHasFixedSize(true);
+        mSuggestionsListView.setAdapter(mSuggestionAdapter);
     }
 
     public void replaceSuggestions(final List<String> newSuggestions) {
