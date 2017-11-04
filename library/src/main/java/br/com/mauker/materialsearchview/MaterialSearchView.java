@@ -28,6 +28,7 @@ import android.text.InputType;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -45,6 +46,11 @@ import android.widget.TextView;
 
 import br.com.mauker.materialsearchview.adapters.SampleSuggestionsAdapter;
 import br.com.mauker.materialsearchview.adapters.SuggestionsAdapter;
+import br.com.mauker.materialsearchview.utils.RxSearch;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Predicate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -52,6 +58,7 @@ import java.util.List;
 import br.com.mauker.materialsearchview.adapters.CursorSearchAdapter;
 import br.com.mauker.materialsearchview.db.HistoryContract;
 import br.com.mauker.materialsearchview.utils.AnimationUtils;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Mauker and Adam McNeilly on 30/03/2016. dd/MM/YY.
@@ -187,6 +194,13 @@ public class MaterialSearchView extends FrameLayout {
      * Listener for when the query text is submitted or changed.
      */
     private OnQueryTextListener mOnQueryTextListener;
+
+    private OnAutoCompleteTextChangeListener mOnAutoCompleteTextChangeListener;
+
+    public void setmOnAutoCompleteTextChangeListener(
+        OnAutoCompleteTextChangeListener mOnAutoCompleteTextChangeListener) {
+        this.mOnAutoCompleteTextChangeListener = mOnAutoCompleteTextChangeListener;
+    }
 
     /**
      * Listener for when the search view opens and closes.
@@ -406,10 +420,19 @@ public class MaterialSearchView extends FrameLayout {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 // When an edit occurs, submit the query.
-                onSubmitQuery();
+                if(mOnQueryTextListener != null) {
+                    mOnQueryTextListener.onQueryTextSubmit(v.toString());
+                }
+                //onSubmitQuery();
                 return true;
             }
         });
+
+
+
+
+
+
 
         mSearchEditText.addTextChangedListener(new TextWatcher() {
 
@@ -421,9 +444,15 @@ public class MaterialSearchView extends FrameLayout {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 // When the text changes, filter
-                mAdapter.getFilter().filter(s.toString());
-                mAdapter.notifyDataSetChanged();
-                MaterialSearchView.this.onTextChanged(s);
+                //mAdapter.getFilter().filter(s.toString());
+                //mAdapter.notifyDataSetChanged();
+                //MaterialSearchView.this.onTextChanged(s);
+                Log.e(LOG_TAG, "onTextChanged:" + s + " mOnQueryTextListener:" + mOnQueryTextListener);
+
+
+                if(mOnQueryTextListener != null) {
+                    mOnQueryTextListener.onQueryTextChange(s.toString());
+                }
             }
 
             @Override
@@ -437,10 +466,32 @@ public class MaterialSearchView extends FrameLayout {
                 if (hasFocus) {
                     showKeyboard(mSearchEditText);
                     showSuggestions();
+
+                    mAutoCompleteDisposable = RxSearch.fromSearchView(MaterialSearchView.this)
+                        .debounce(500, TimeUnit.MILLISECONDS)
+                        .filter(new Predicate<String>() {
+                            @Override public boolean test(String s) throws Exception {
+                                return s.length() > 1;
+                            }
+                        })
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Consumer<String>() {
+                            @Override public void accept(String s) throws Exception {
+                                Log.e(LOG_TAG, "fromSearchView:" + s);
+                                if (mOnAutoCompleteTextChangeListener != null) {
+                                    mOnAutoCompleteTextChangeListener.onTextChanged(s);
+                                }
+                            }
+                        });
+                } else {
+                    mAutoCompleteDisposable.dispose();
                 }
             }
         });
+
     }
+
+    Disposable mAutoCompleteDisposable;
     //endregion
 
     //region Show Methods
@@ -495,8 +546,8 @@ public class MaterialSearchView extends FrameLayout {
      * Displays the available suggestions, if any.
      */
     private void showSuggestions() {
-        final int itemsCount =
-            (( mSuggestionsListView.getAdapter())).getItemCount();
+        //final int itemsCount =
+        //    (( mSuggestionsListView.getAdapter())).getItemCount();
         mSuggestionsListView.setVisibility(View.VISIBLE);
     }
 
@@ -1215,6 +1266,10 @@ public class MaterialSearchView extends FrameLayout {
          * @return True when the query is handled by the listener, false to let the SearchView handle the default case.
          */
         boolean onQueryTextChange(String newText);
+    }
+
+    public interface OnAutoCompleteTextChangeListener{
+        void onTextChanged(final String newQuery);
     }
 
     /**

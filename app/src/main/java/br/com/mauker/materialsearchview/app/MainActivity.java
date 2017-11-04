@@ -45,17 +45,6 @@ public class MainActivity extends AppCompatActivity {
         bt_clearSuggestions = (Button) findViewById(R.id.bt_clearSuggestions);
         bt_clearAll = (Button) findViewById(R.id.bt_clearAll);
 
-        searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                return false;
-            }
-        });
 
         searchView.setSearchViewListener(new MaterialSearchView.SearchViewListener() {
             @Override
@@ -69,15 +58,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        searchView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // Do something when the suggestion list is clicked.
-                String suggestion = searchView.getSuggestionAtPosition(position);
-
-                searchView.setQuery(suggestion, false);
-            }
-        });
+        //searchView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        //    @Override
+        //    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        //        // Do something when the suggestion list is clicked.
+        //        String suggestion = searchView.getSuggestionAtPosition(position);
+        //
+        //        searchView.setQuery(suggestion, false);
+        //    }
+        //});
 
         bt_clearHistory.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -183,9 +172,9 @@ public class MainActivity extends AppCompatActivity {
         searchView.activityResumed();
         String[] arr = getResources().getStringArray(R.array.suggestions);
 
-        final ArrayList<String> suggestions = new ArrayList<>();
-        suggestions.addAll(Arrays.asList(arr));
-        searchView.replaceSuggestions(suggestions);
+        //final ArrayList<String> suggestions = new ArrayList<>();
+        //suggestions.addAll(Arrays.asList(arr));
+        //searchView.replaceSuggestions(suggestions);
         //searchView.addSuggestions(arr);
     }
 
