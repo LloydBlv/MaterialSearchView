@@ -468,10 +468,10 @@ public class MaterialSearchView extends FrameLayout {
                     showSuggestions();
 
                     mAutoCompleteDisposable = RxSearch.fromSearchView(MaterialSearchView.this)
-                        .debounce(500, TimeUnit.MILLISECONDS)
+                        .debounce(mDebounceTimeoutInMillis, TimeUnit.MILLISECONDS)
                         .filter(new Predicate<String>() {
                             @Override public boolean test(String s) throws Exception {
-                                return s.length() > 1;
+                                return s.length() >= mAutoCompleteMinimunLength;
                             }
                         })
                         .observeOn(AndroidSchedulers.mainThread())
@@ -489,6 +489,17 @@ public class MaterialSearchView extends FrameLayout {
             }
         });
 
+    }
+
+    long mDebounceTimeoutInMillis = 500;
+    int mAutoCompleteMinimunLength = 2;
+
+    public void setAutoCompleteMinimunLength(int mAutoCompleteMinimunLength) {
+        this.mAutoCompleteMinimunLength = mAutoCompleteMinimunLength;
+    }
+
+    public void setDebounceTimeoutInMillis(long mDebounceTimeoutInMillis) {
+        this.mDebounceTimeoutInMillis = mDebounceTimeoutInMillis;
     }
 
     Disposable mAutoCompleteDisposable;
