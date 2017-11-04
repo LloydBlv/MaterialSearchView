@@ -1085,7 +1085,7 @@ public class MaterialSearchView extends FrameLayout {
         }
     }
 
-    public void replaceSuggestions(final ArrayList<String> newSuggestions) {
+    public void replaceSuggestions(final List<String> newSuggestions) {
         ((SampleSuggestionsAdapter) mSuggestionAdapter).mItems.clear();
         ((SampleSuggestionsAdapter) mSuggestionAdapter).mItems.addAll(newSuggestions);
         ((SampleSuggestionsAdapter) mSuggestionAdapter).notifyDataSetChanged();
