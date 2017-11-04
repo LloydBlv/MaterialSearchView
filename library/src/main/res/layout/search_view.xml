@@ -75,11 +75,10 @@
                 android:visibility="gone" />
         </LinearLayout>
 
-        <ListView
+        <android.support.v7.widget.RecyclerView
             android:id="@+id/suggestion_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:divider="@null"
-            android:dividerHeight="0dp" />
+            />
     </LinearLayout>
 </FrameLayout>

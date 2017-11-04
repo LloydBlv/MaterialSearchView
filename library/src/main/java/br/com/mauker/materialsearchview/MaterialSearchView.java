@@ -17,9 +17,12 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.speech.RecognizerIntent;
+import android.support.design.internal.NavigationMenuPresenter;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatDelegate;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextUtils;
@@ -40,6 +43,8 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import br.com.mauker.materialsearchview.adapters.SampleSuggestionsAdapter;
+import br.com.mauker.materialsearchview.adapters.SuggestionsAdapter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -154,12 +159,15 @@ public class MaterialSearchView extends FrameLayout {
     /**
      * The ListView for displaying suggestions based on the search.
      */
-    private ListView mSuggestionsListView;
+    private RecyclerView mSuggestionsListView;
 
     /**
      * Adapter for displaying suggestions.
      */
     private CursorAdapter mAdapter;
+
+    private RecyclerView.Adapter<RecyclerView.ViewHolder> mSuggestionAdapter;
+    //private CursorAdapter mAdapter;
     //endregion
 
     //region Query Properties
@@ -235,7 +243,7 @@ public class MaterialSearchView extends FrameLayout {
         mSearchEditText = (EditText) mRoot.findViewById(R.id.et_search);
         mVoice = (ImageButton) mRoot.findViewById(R.id.action_voice);
         mClear = (ImageButton) mRoot.findViewById(R.id.action_clear);
-        mSuggestionsListView = (ListView) mRoot.findViewById(R.id.suggestion_list);
+        mSuggestionsListView = (RecyclerView) mRoot.findViewById(R.id.suggestion_list);
 
         // Set click listeners
         mBack.setOnClickListener(new View.OnClickListener() {
@@ -294,8 +302,13 @@ public class MaterialSearchView extends FrameLayout {
                 }
             }
         });
-        mSuggestionsListView.setAdapter(mAdapter);
-        mSuggestionsListView.setTextFilterEnabled(true);
+
+        mSuggestionAdapter = new SampleSuggestionsAdapter();
+        mSuggestionsListView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        mSuggestionsListView.setHasFixedSize(true);
+        mSuggestionsListView.setAdapter(mSuggestionAdapter);
+        //mSuggestionsListView.setAdapter(mAdapter);
+        //mSuggestionsListView.setTextFilterEnabled(true);
     }
 
     /**
@@ -482,6 +495,8 @@ public class MaterialSearchView extends FrameLayout {
      * Displays the available suggestions, if any.
      */
     private void showSuggestions() {
+        final int itemsCount =
+            (( mSuggestionsListView.getAdapter())).getItemCount();
         mSuggestionsListView.setVisibility(View.VISIBLE);
     }
 
@@ -491,6 +506,7 @@ public class MaterialSearchView extends FrameLayout {
     public void openSearch() {
         // If search is already open, just return.
         if(mOpen) {
+
             return;
         }
 
@@ -676,7 +692,7 @@ public class MaterialSearchView extends FrameLayout {
      * @param listener - The ItemClickListener.
      */
     public void setOnItemClickListener(AdapterView.OnItemClickListener listener) {
-        mSuggestionsListView.setOnItemClickListener(listener);
+        //mSuggestionsListView.setOnItemClickListener(listener);
     }
 
     /**
@@ -685,7 +701,7 @@ public class MaterialSearchView extends FrameLayout {
      * @param listener - The ItemLongClickListener.
      */
     public void setOnItemLongClickListener(AdapterView.OnItemLongClickListener listener) {
-        mSuggestionsListView.setOnItemLongClickListener(listener);
+        //mSuggestionsListView.setOnItemLongClickListener(listener);
     }
     
     /**
@@ -1067,6 +1083,17 @@ public class MaterialSearchView extends FrameLayout {
                     value
             );
         }
+    }
+
+    public void replaceSuggestions(final ArrayList<String> newSuggestions) {
+        ((SampleSuggestionsAdapter) mSuggestionAdapter).mItems.clear();
+        ((SampleSuggestionsAdapter) mSuggestionAdapter).mItems.addAll(newSuggestions);
+        ((SampleSuggestionsAdapter) mSuggestionAdapter).notifyDataSetChanged();
+    }
+
+    public void removeSuggestions() {
+        ((SampleSuggestionsAdapter) mSuggestionAdapter).mItems.clear();
+        mSuggestionAdapter.notifyDataSetChanged();
     }
 
     /**

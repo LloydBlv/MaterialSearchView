@@ -17,6 +17,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 import br.com.mauker.materialsearchview.MaterialSearchView;
+import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -37,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         searchView = (MaterialSearchView) findViewById(R.id.search_view);
+
+        searchView.adjustTintAlpha(0.6f);
 
         bt_clearHistory = (Button) findViewById(R.id.bt_clearHistory);
         bt_clearSuggestions = (Button) findViewById(R.id.bt_clearSuggestions);
@@ -180,7 +183,10 @@ public class MainActivity extends AppCompatActivity {
         searchView.activityResumed();
         String[] arr = getResources().getStringArray(R.array.suggestions);
 
-        searchView.addSuggestions(arr);
+        final ArrayList<String> suggestions = new ArrayList<>();
+        suggestions.addAll(Arrays.asList(arr));
+        searchView.replaceSuggestions(suggestions);
+        //searchView.addSuggestions(arr);
     }
 
     private void clearHistory() {
