@@ -56,6 +56,7 @@ import br.com.mauker.materialsearchview.adapters.CursorSearchAdapter;
 import br.com.mauker.materialsearchview.db.HistoryContract;
 import br.com.mauker.materialsearchview.utils.AnimationUtils;
 import java.util.concurrent.TimeUnit;
+import timber.log.Timber;
 
 /**
  * Created by Mauker and Adam McNeilly on 30/03/2016. dd/MM/YY.
@@ -192,6 +193,7 @@ public class MaterialSearchView extends FrameLayout {
      */
     private OnQueryTextListener mOnQueryTextListener;
 
+
     private OnAutoCompleteTextChangeListener mOnAutoCompleteTextChangeListener;
 
     public void setmOnAutoCompleteTextChangeListener(
@@ -202,7 +204,7 @@ public class MaterialSearchView extends FrameLayout {
     /**
      * Listener for when the search view opens and closes.
      */
-    private SearchViewListener mSearchViewListener;
+    public SearchViewListener mSearchViewListener;
 
     /**
      * Listener for interaction with the voice button.
@@ -416,9 +418,10 @@ public class MaterialSearchView extends FrameLayout {
         mSearchEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                Timber.d("onEditorAction(), actionId:[%s], mOnQueryTextListener:[%s]", actionId, mOnQueryTextListener);
                 // When an edit occurs, submit the query.
                 if(mOnQueryTextListener != null) {
-                    mOnQueryTextListener.onQueryTextSubmit(v.toString());
+                    mOnQueryTextListener.onQueryTextSubmit(v.getText().toString());
                 }
                 //onSubmitQuery();
                 return true;
@@ -444,7 +447,7 @@ public class MaterialSearchView extends FrameLayout {
                 //mAdapter.getFilter().filter(s.toString());
                 //mAdapter.notifyDataSetChanged();
                 //MaterialSearchView.this.onTextChanged(s);
-                Log.e(LOG_TAG, "onTextChanged:" + s + " mOnQueryTextListener:" + mOnQueryTextListener);
+                Timber.e("onTextChanged:[%s] mOnQueryTextListener:[%s]", s, mOnQueryTextListener);
 
 
                 if(mOnQueryTextListener != null) {
@@ -465,6 +468,7 @@ public class MaterialSearchView extends FrameLayout {
                     showSuggestions();
 
                     mAutoCompleteDisposable = RxSearch.fromSearchView(MaterialSearchView.this)
+                        //.debounce(2_000, TimeUnit.MILLISECONDS)
                         .debounce(mDebounceTimeoutInMillis, TimeUnit.MILLISECONDS)
                         .filter(new Predicate<String>() {
                             @Override public boolean test(String s) throws Exception {
@@ -474,7 +478,7 @@ public class MaterialSearchView extends FrameLayout {
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(new Consumer<String>() {
                             @Override public void accept(String s) throws Exception {
-                                Log.e(LOG_TAG, "fromSearchView:" + s);
+                                Timber.e("fromSearchView:[%s]", s);
                                 if (mOnAutoCompleteTextChangeListener != null) {
                                     mOnAutoCompleteTextChangeListener.onTextChanged(s);
                                 }
@@ -488,7 +492,7 @@ public class MaterialSearchView extends FrameLayout {
 
     }
 
-    long mDebounceTimeoutInMillis = 500;
+    long mDebounceTimeoutInMillis = 700;
     int mAutoCompleteMinimumLength = 2;
 
     public void setAutoCompleteMinimunLength(int mAutoCompleteMinimunLength) {
@@ -625,6 +629,7 @@ public class MaterialSearchView extends FrameLayout {
         // Clear text, values, and focus.
         mSearchEditText.setText("");
         dismissSuggestions();
+
         clearFocus();
 
         if (mShouldAnimate) {
@@ -658,6 +663,8 @@ public class MaterialSearchView extends FrameLayout {
         }
 
         mOpen = false;
+
+
     }
     //endregion
 
@@ -1293,6 +1300,8 @@ public class MaterialSearchView extends FrameLayout {
          * Called when the search view closes.
          */
         void onSearchViewClosed();
+
+        void onTextSubmitted(final String query);
     }
 
     /**

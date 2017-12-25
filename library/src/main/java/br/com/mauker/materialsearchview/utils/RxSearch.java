@@ -1,7 +1,10 @@
 package br.com.mauker.materialsearchview.utils;
 
 import android.support.annotation.NonNull;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.widget.EditText;
 import br.com.mauker.materialsearchview.MaterialSearchView;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
@@ -20,6 +23,7 @@ public class RxSearch {
 
       @Override
       public boolean onQueryTextSubmit(String query) {
+        searchView.mSearchViewListener.onTextSubmitted(query);
         subject.onComplete();
         return true;
       }
@@ -36,4 +40,5 @@ public class RxSearch {
 
     return subject;
   }
+
 }
